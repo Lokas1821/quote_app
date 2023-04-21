@@ -51,8 +51,9 @@ def add_quote():
         print("Thank you for your input!")
     else:
         pass
-    redis_connection.set(new_quote, new_author)
+    #redis_connection.set(new_quote, new_author)
+    redis_connection.json().arrappend("my_quotes", "$.quotes", str(new_quote), str(new_author))
 
 rand_quote()
 add_quote()
-find_quote()
+
