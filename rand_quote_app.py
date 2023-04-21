@@ -19,17 +19,22 @@ redis_connection.ping()
 #print(quote['quotes'][0]['author'])
 redis_connection.json().set("my_quotes",'$',response.json())
 
-
+num_quotes = redis_connection.json().arrlen("my_quotes", "$.quotes")[0]
 
 with open("datafile.json", 'r') as json_file:
     json_data = json.load(json_file)
 
 
-random_num = random.randint(1,29)
+
+random_num = random.randint(0, num_quotes)
+#random_num = len(json_data["quotes"])
+#index = random.randint(0, random_num -1)
+
 def find_quote():
-    json_expression = parse('quotes[5].quote')  #I thought adding a the random_num variable as the index number would work
-    for match in json_expression.find(json_data):
-        print(f'random quote: {match.value}')
+    capture = redis_connection.json().get("my_quotes", f"$.quotes[{random_num}]")[0]
+    captured_quote = capture.get('quote')
+    captured_author = capture.get('author')
+    print(f'random quote: {captured_quote} Author: {captured_author}')
 
 def rand_quote():
     get_quote = input("If you would like a random quote, type 'y' and enter: ")
@@ -50,3 +55,4 @@ def add_quote():
 
 rand_quote()
 add_quote()
+find_quote()
